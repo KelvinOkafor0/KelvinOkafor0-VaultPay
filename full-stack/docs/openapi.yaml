@@ -1,0 +1,102 @@
+openapi: 3.0.3
+info:
+  title: VaultPay API
+  version: 1.0.0
+  description: MVP API for a partner-led Nigerian financial platform. Configure BANK_PROVIDER and KYC_PROVIDER to use the Flutterwave adapter; cards remain issuer/provider dependent.
+servers:
+  - url: http://localhost:4000/api/v1
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    TransferCreate:
+      type: object
+      required: [sourceAccountId, beneficiaryId, amount]
+      properties:
+        sourceAccountId: {type: string, format: uuid}
+        beneficiaryId: {type: string, format: uuid}
+        amount: {type: string, example: '50000.00'}
+        currency: {type: string, example: NGN}
+        description: {type: string}
+paths:
+  /health:
+    get:
+      security: []
+      responses: {'200': {description: OK}}
+  /auth/register:
+    post:
+      security: []
+      responses: {'201': {description: User created}, '409': {description: User exists}}
+  /auth/login:
+    post:
+      security: []
+      responses: {'200': {description: Authenticated}}
+  /auth/refresh:
+    post:
+      security: []
+      responses: {'200': {description: Refreshed}}
+  /auth/logout:
+    post:
+      responses: {'200': {description: Logged out}}
+  /users/me:
+    get: {responses: {'200': {description: Current user}}}
+    patch: {responses: {'200': {description: Updated user}}}
+  /kyc:
+    get: {responses: {'200': {description: Current KYC}}}
+    post: {responses: {'202': {description: Verification started}}}
+  /kyc/complete:
+    post: {responses: {'200': {description: Complete provider redirect flow}}}
+  /kyc/documents:
+    post: {responses: {'201': {description: Document metadata recorded}}}
+  /accounts:
+    get: {responses: {'200': {description: Accounts}}}
+    post: {responses: {'201': {description: Account created}}}
+  /accounts/{id}/balance:
+    get: {responses: {'200': {description: Balance}}}
+  /banks:
+    get: {responses: {'200': {description: Supported banks from configured provider}}}
+  /accounts/{id}/funding-instructions:
+    post: {responses: {'200': {description: Funding account instructions}}}
+  /accounts/{id}/ledger:
+    get: {responses: {'200': {description: Ledger entries}}}
+  /accounts/{id}/statement:
+    get: {responses: {'200': {description: Statement}}}
+  /transfers/name-enquiry:
+    post: {responses: {'200': {description: Beneficiary lookup}}}
+  /transfers:
+    get: {responses: {'200': {description: Transfer list}}}
+    post: {responses: {'201': {description: Transfer created}}}
+  /transfers/{id}:
+    get: {responses: {'200': {description: Transfer status}}}
+  /transfers/{id}/authorize:
+    post: {responses: {'200': {description: Transfer authorized}}}
+  /beneficiaries:
+    get: {responses: {'200': {description: Beneficiaries}}}
+    post: {responses: {'201': {description: Beneficiary created}}}
+  /cards:
+    get: {responses: {'200': {description: Cards}}}
+    post: {responses: {'201': {description: Card issued}}}
+  /cards/{id}/freeze:
+    post: {responses: {'200': {description: Card frozen}}}
+  /cards/{id}/unfreeze:
+    post: {responses: {'200': {description: Card unfrozen}}}
+  /cards/{id}/controls:
+    patch: {responses: {'200': {description: Controls updated}}}
+  /cards/{id}/transactions:
+    get: {responses: {'200': {description: Card transactions}}}
+  /admin/audit-logs:
+    get: {responses: {'200': {description: Audit events}}}
+  /admin/kyc:
+    get: {responses: {'200': {description: KYC queue}}}
+  /admin/kyc/{userId}/verify:
+    post: {responses: {'200': {description: KYC approved}}}
+  /webhooks/flutterwave:
+    post:
+      security: []
+      description: Accepts signed Flutterwave BVN completion, transfer completion, and virtual-account charge completion events.
+      responses: {'200': {description: Webhook accepted}}

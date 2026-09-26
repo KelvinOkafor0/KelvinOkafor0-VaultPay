@@ -1,0 +1,2 @@
+-- Demo seed is intentionally minimal. Production should create regulated accounts
+-- only through the sponsoring bank / PSP integration.

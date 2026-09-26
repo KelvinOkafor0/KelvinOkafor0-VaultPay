@@ -1,0 +1,92 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: vaultpay
+      POSTGRES_USER: vaultpay
+      POSTGRES_PASSWORD: vaultpay
+    ports:
+      - "5432:5432"
+    volumes:
+      - vaultpay_pgdata:/var/lib/postgresql/data
+
+  migrate:
+    image: postgres:16-alpine
+    working_dir: /app
+    volumes:
+      - .:/app:ro
+    environment:
+      DATABASE_URL: postgresql://vaultpay:vaultpay@postgres:5432/vaultpay
+    command: sh -c "until pg_isready -h postgres -U vaultpay -d vaultpay; do sleep 1; done; for f in /app/db/migrations/*.sql; do echo Applying $f; psql \"$DATABASE_URL\" -v ON_ERROR_STOP=1 -f \"$f\"; done"
+    depends_on:
+      - postgres
+
+  api:
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: sh -c "npm install && npm --workspace apps/api run dev"
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: ${PORT:-4000}
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:5173}
+      DATABASE_URL: postgresql://vaultpay:vaultpay@postgres:5432/vaultpay
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-local-development-only-access-secret}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-local-development-only-refresh-secret}
+      ACCESS_TTL: ${ACCESS_TTL:-15m}
+      REFRESH_TTL: ${REFRESH_TTL:-30d}
+      KYC_PROVIDER: ${KYC_PROVIDER:-mock}
+      BANK_PROVIDER: ${BANK_PROVIDER:-mock}
+      CARD_PROVIDER: ${CARD_PROVIDER:-mock}
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET:-local-webhook-secret}
+      FLW_BASE_URL: ${FLW_BASE_URL:-https://api.flutterwave.com}
+      FLW_SECRET_KEY: ${FLW_SECRET_KEY:-}
+      FLW_SECRET_HASH: ${FLW_SECRET_HASH:-}
+      FLW_KYC_REDIRECT_URL: ${FLW_KYC_REDIRECT_URL:-http://localhost:5173/kyc/callback}
+    ports:
+      - "4000:4000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  worker:
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: sh -c "npm install && npm --workspace apps/api run worker"
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      DATABASE_URL: postgresql://vaultpay:vaultpay@postgres:5432/vaultpay
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-local-development-only-access-secret}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-local-development-only-refresh-secret}
+      ACCESS_TTL: ${ACCESS_TTL:-15m}
+      REFRESH_TTL: ${REFRESH_TTL:-30d}
+      KYC_PROVIDER: ${KYC_PROVIDER:-mock}
+      BANK_PROVIDER: ${BANK_PROVIDER:-mock}
+      CARD_PROVIDER: ${CARD_PROVIDER:-mock}
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET:-local-webhook-secret}
+      FLW_BASE_URL: ${FLW_BASE_URL:-https://api.flutterwave.com}
+      FLW_SECRET_KEY: ${FLW_SECRET_KEY:-}
+      FLW_SECRET_HASH: ${FLW_SECRET_HASH:-}
+      FLW_KYC_REDIRECT_URL: ${FLW_KYC_REDIRECT_URL:-http://localhost:5173/kyc/callback}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  web:
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: sh -c "npm install && npm --workspace apps/web run dev -- --host 0.0.0.0"
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:4000/api/v1}
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+
+volumes:
+  vaultpay_pgdata:

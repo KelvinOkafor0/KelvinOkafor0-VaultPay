@@ -1,0 +1,11 @@
+import Fastify from 'fastify';
+import cookie from '@fastify/cookie'; import cors from '@fastify/cors'; import helmet from '@fastify/helmet'; import rateLimit from '@fastify/rate-limit';
+import { env } from './env.js'; import auth from './plugins/auth.js';
+import { systemRoutes } from './routes/system.js'; import { authRoutes } from './routes/auth.js'; import { userRoutes } from './routes/users.js'; import { kycRoutes } from './routes/kyc.js'; import { setupRoutes } from './routes/setup.js'; import { accountRoutes } from './routes/accounts.js'; import { beneficiaryRoutes } from './routes/beneficiaries.js'; import { transferRoutes } from './routes/transfers.js'; import { cardRoutes } from './routes/cards.js'; import { adminRoutes } from './routes/admin.js'; import { pool } from './db.js'; import { webhookRoutes } from './routes/webhooks.js';
+const app=Fastify({logger:true,trustProxy:true});
+app.addContentTypeParser('application/json',{parseAs:'string'},function(req,body,done){try{(req as any).rawBody=body;done(null,JSON.parse(body as string));}catch(err){done(err as Error,undefined);}});
+await app.register(helmet); await app.register(cookie); await app.register(cors,{origin:env.WEB_ORIGIN,credentials:true}); await app.register(rateLimit,{max:120,timeWindow:'1 minute'}); await app.register(auth);
+await app.register(systemRoutes,{prefix:'/api/v1'}); await app.register(authRoutes,{prefix:'/api/v1'}); await app.register(userRoutes,{prefix:'/api/v1'}); await app.register(kycRoutes,{prefix:'/api/v1'}); await app.register(setupRoutes,{prefix:'/api/v1'}); await app.register(accountRoutes,{prefix:'/api/v1'}); await app.register(beneficiaryRoutes,{prefix:'/api/v1'}); await app.register(transferRoutes,{prefix:'/api/v1'}); await app.register(cardRoutes,{prefix:'/api/v1'}); await app.register(adminRoutes,{prefix:'/api/v1'}); await app.register(webhookRoutes,{prefix:'/api/v1'});
+app.setErrorHandler((err,req,reply)=>{req.log.error(err);const status=(err as any).statusCode??(err.name==='ZodError'?400:500);reply.code(status).send({error:status===500?'INTERNAL_ERROR':(err as any).message||'BAD_REQUEST'})});
+await app.listen({port:env.PORT,host:'0.0.0.0'});
+process.on('SIGTERM',async()=>{await app.close();await pool.end();process.exit(0)});
