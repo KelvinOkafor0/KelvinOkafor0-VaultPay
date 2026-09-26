@@ -37,7 +37,7 @@ VaultPay Technologies is the technology layer. It must not present itself as the
 The application therefore exposes:
 
 - `REGULATORY_MODEL=CBN_PSB_PRE_LICENSING`
-- `REGULATORY_STATUS=PRE_LICENSING`
+- `REGULATORY_STATUS=APPLICATION_READY`
 - `LIVE_MONEY_ENABLED=false`
 
 Live money movement is deliberately gated until the regulatory and provider prerequisites are complete.
