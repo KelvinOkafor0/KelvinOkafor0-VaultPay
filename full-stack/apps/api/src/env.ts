@@ -8,7 +8,7 @@ export const env = z.object({
   KYC_PROVIDER:z.enum(['mock','flutterwave']).default('mock'), BANK_PROVIDER:z.enum(['mock','flutterwave']).default('mock'),
   CARD_PROVIDER:z.enum(['mock']).default('mock'), WEBHOOK_SECRET:z.string().min(8),
   REGULATORY_MODEL:z.enum(['PARTNER_REGULATED','CBN_PSB_PRE_LICENSING','CBN_PSB_LICENSED']).default('PARTNER_REGULATED'),
-  REGULATORY_STATUS:z.enum(['PARTNER_DEPENDENT','PRE_LICENSING','LICENSED']).default('PARTNER_DEPENDENT'),
+  REGULATORY_STATUS:z.enum(['PARTNER_DEPENDENT','APPLICATION_READY','PRE_LICENSING','LICENSED']).default('PARTNER_DEPENDENT'),
   LIVE_MONEY_ENABLED:boolFromEnv.default(false),
   FLW_BASE_URL:z.string().url().default('https://api.flutterwave.com'),
   FLW_SECRET_KEY:z.string().optional(), FLW_SECRET_HASH:z.string().optional(), FLW_KYC_REDIRECT_URL:z.string().url().optional()
