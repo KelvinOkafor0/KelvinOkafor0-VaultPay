@@ -4,7 +4,8 @@
 
 [ ] Use a separate technology/IP company for VaultPay software and a separately governed regulated financial-services entity.
 [ ] Target CBN Payment Service Bank (PSB) licensing for the regulated entity if the intended product remains deposit, payments/remittance, card and wallet focused.
-[ ] Obtain CBN Approval-in-Principle before presenting the proposed PSB as licensed or completing PSB incorporation steps that require AIP.
+[ ] Submit the PSB application through the current CBN LARP process.
+[ ] Obtain CBN Approval-in-Principle before representing the proposed PSB as licensed or completing any incorporation step that the current CBN process conditions on AIP.
 [ ] Satisfy CBN application, governance, capital, management, IT, AML/CFT, risk, consumer-protection and pre-licensing inspection requirements.
 [ ] Execute arm's-length technology/shared-services agreements between related entities and obtain any required regulatory approvals.
 [ ] Do not enable live customer money movement until the regulated entity or an approved regulated partner is legally authorized and the provider contracts are active.
