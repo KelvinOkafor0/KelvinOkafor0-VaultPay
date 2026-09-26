@@ -1,6 +1,15 @@
 # VaultPay launch checklist
 
-## Regulated partner
+## CBN operating structure
+
+[ ] Use a separate technology/IP company for VaultPay software and a separately governed regulated financial-services entity.
+[ ] Target CBN Payment Service Bank (PSB) licensing for the regulated entity if the intended product remains deposit, payments/remittance, card and wallet focused.
+[ ] Obtain CBN Approval-in-Principle before presenting the proposed PSB as licensed or completing PSB incorporation steps that require AIP.
+[ ] Satisfy CBN application, governance, capital, management, IT, AML/CFT, risk, consumer-protection and pre-licensing inspection requirements.
+[ ] Execute arm's-length technology/shared-services agreements between related entities and obtain any required regulatory approvals.
+[ ] Do not enable live customer money movement until the regulated entity or an approved regulated partner is legally authorized and the provider contracts are active.
+
+## Regulated partner (interim operating model)
 
 [ ] Select CBN-regulated sponsor bank/PSP category appropriate to the exact product.
 [ ] Contract for customer-account issuance/holding and settlement.
@@ -15,6 +24,7 @@
 [ ] BVN/NIN and other required identity checks through approved channels.
 [ ] Sanctions/PEP screening.
 [ ] AML/CFT/CPF monitoring and suspicious-activity escalation/reporting.
+[ ] Real-time fraud monitoring and transaction controls.
 [ ] Case-management and audit retention.
 
 ## Payments
@@ -27,6 +37,17 @@
 [ ] Reversals.
 [ ] Provider reconciliation.
 [ ] End-of-day settlement reconciliation.
+[ ] Customer-level transaction limits and step-up authentication.
+[ ] Device/session controls for online account access and instant payments.
+
+## Accounts and statements
+
+[ ] Account opening eligibility and tiered-KYC controls.
+[ ] Account/wallet ledger reconciliation.
+[ ] Available vs ledger balance controls.
+[ ] Statements and downloadable records.
+[ ] Dormancy/closure workflow where applicable.
+[ ] Complaints and dispute workflow.
 
 ## Cards
 
